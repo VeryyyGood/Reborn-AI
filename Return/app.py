@@ -42,7 +42,7 @@ retriever_tool = create_retriever_tool(
 )
 
 # 애플리케이션 기능 PDF 파일 로드 및 문서 추출
-reborn_loader = PyPDFLoader("C:/Users/mcy32/Documents/Reborn-AI/Return/REBORNdocs.pdf")
+reborn_loader = PyPDFLoader("./REBORNdocs.pdf")
 reborn_docs = reborn_loader.load()
 
 # 문서를 벡터로 변환
