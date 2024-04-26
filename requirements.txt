@@ -1,0 +1,8 @@
+faiss-cpu==1.8.0
+Flask==3.0.3
+langchain==0.1.12
+langchain-community==0.0.34
+langchain-core==0.1.46
+langchain-openai==0.0.5
+langchain-text-splitters==0.0.1
+requests==2.31.0
