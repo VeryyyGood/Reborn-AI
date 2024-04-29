@@ -84,7 +84,7 @@ def run_chatbot(input_text, chat_history=None):
 
 app = Flask(__name__)
 
-@app.route('/api/hello')
+@app.route('/hello')
 def index():
     return 'Welcome to the Chatbot Service!'
 
@@ -102,12 +102,12 @@ def stream_response(input_text):
         yield character
         time.sleep(0.1)  # 한 글자를 보낸 후 잠시 대기
 
-@app.route('/api/chat', methods=['POST'])
+@app.route('/', methods=['POST'])
 def chat():
     input_text = request.json.get("message")
 
     return Response(stream_response(input_text), content_type='text/plain; charset=utf-8')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
 
