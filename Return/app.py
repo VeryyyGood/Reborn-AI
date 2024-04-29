@@ -80,7 +80,8 @@ def run_chatbot(input_text, chat_history=None):
     else:
         # 그 외 일반적인 챗봇 로직 실행
         response = agent_executor.invoke({"input": input_text, "chat_history": chat_history})
-    return response
+        response_text = response['output']
+        return {"response": response_text}
 
 app = Flask(__name__)
 
