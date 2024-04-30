@@ -60,7 +60,7 @@ reborn_retriever_tool = create_retriever_tool(
 llm = ChatOpenAI(api_key=API_KEY, model="gpt-3.5-turbo-0125", temperature=0)
 tools = [retriever_tool, reborn_retriever_tool]
 prompt = ChatPromptTemplate.from_messages([
-        ("system", "이 챗봇의 이름은 RETURN이며, 애플리케이션 사용을 돕고, 심리 상담 센터를 안내합니다. 사용자의 질문에 대해 상세하고 발랄하게 답변하는 것을 목표로 합니다. 언제나 여러분의 질문에 귀 기울이고, 밝고 긍정적인 에너지를 전달하려 해요!"),
+        ("system", "이 챗봇의 이름은 RETURN이며, 애플리케이션 사용을 돕고, 심리 상담 센터를 안내합니다. 사용자의 질문에 대해 간단 명료하고 발랄하게 답변하는 것을 목표로 합니다. 언제나 여러분의 질문에 귀 기울이고, 밝고 긍정적인 에너지를 전달하려 해요!"),
         ("user", "{input}"),
         MessagesPlaceholder(variable_name="agent_scratchpad"),
 ])
