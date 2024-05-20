@@ -4,12 +4,16 @@ import os
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_openai_functions_agent, AgentExecutor
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.tools.retriever import create_retriever_tool
 from langchain_community.document_loaders import PyPDFLoader
+from langchain.schema import Document
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from bs4 import BeautifulSoup
 
 # 자연어 처리를 위한 함수 정의
 def identify_intent(input_text):
@@ -17,13 +21,72 @@ def identify_intent(input_text):
         return "introduce"
     else:
         return "general"
+    
+def crawl_counseling_centers_selenium(url):
+    # 웹 드라이버 설정
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')  # 브라우저 창을 띄우지 않음
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    driver = webdriver.Chrome(options=options)
 
-# 상담센터 정보 로드
-loader = WebBaseLoader("https://counselors.or.kr/KOR/user/find_center.php")
-docs = loader.load()
+    driver.get(url)
+    wait = WebDriverWait(driver, 10)
+    
+    center_list = []
+    page_number = 0
+    
+    while page_number < 18:
+        try:
+            # 페이지 로드 대기
+            wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'section#user_sub.find_center.con')))
+            
+            # 페이지 내용 가져오기
+            soup = BeautifulSoup(driver.page_source, 'html.parser')
+            centers = soup.find('section', {'id': 'user_sub', 'class': 'find_center con'}).find('div', class_='center_list_wrap').find('table').find('tbody').find_all('tr')
+            
+            for center in centers:
+                td_tags = center.find_all('td')
+                if not td_tags:
+                    continue
+                region = td_tags[1].text.strip()
+                name = td_tags[2].text.strip()
+                contact = td_tags[4].text.strip()
+                center_list.append({"region": region, "name": name, "contact": contact})
+            
+            # 페이지 버튼 모두 찾기
+            page_buttons = driver.find_elements(By.CSS_SELECTOR, "section#user_sub.find_center.con div.paging a")
+            if page_buttons:
+                # 마지막 버튼 클릭
+                next_button = page_buttons[-2]
+                if 'disabled' not in next_button.get_attribute('class'):
+                    next_button.click()
+                    page_number += 1
+                    print(page_number)
+                    time.sleep(2)
+                else:
+                    break
+
+
+        except Exception as e:
+            print(f"오류 발생: {e}")
+            break
+    
+    driver.quit()
+    return center_list
+
+def create_documents(centers):
+    documents = [Document(page_content=f"지역: {center['region']}, 센터명: {center['name']}, 연락처: {center['contact']}") for center in centers]
+    return documents
+
+def filter_centers_by_region(centers, requested_region):
+    filtered_centers = [center for center in centers if requested_region in center['region']]
+    return filtered_centers
+
+center_url = "https://counselors.or.kr/KOR/user/find_center.php"
+centers = crawl_counseling_centers_selenium(center_url)
+documents = create_documents(centers)  # 모든 지역의 상담 센터 정보를 문서로 변환
 embeddings = OpenAIEmbeddings()
-text_splitter = RecursiveCharacterTextSplitter()
-documents = text_splitter.split_documents(docs)
 vector = FAISS.from_documents(documents, embeddings)
 
 #환경 변수에서 API 키 로드
