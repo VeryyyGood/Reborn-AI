@@ -18,7 +18,7 @@ RE:TURN은 RE:BORN 애플리케이션이 무엇인지, 어떤 기능을 가지�
 심리상담소 정보는 [https://counselors.or.kr/KOR/user/find_center.php](https://counselors.or.kr/KOR/user/find_center.php) 사이트를 Selenium을 사용하여 크롤링합니다. 이를 통해 사용자는 다양한 심리상담소 정보를 손쉽게 얻을 수 있습니다.
 
 ## 📊 데이터 크롤링
-Selenium을 사용하여 심리상담소 정보를 주기적으로 크롤링합니다. 크롤링된 데이터는 챗봇의 응답에 사용됩니다.
+Selenium을 사용하여 심리상담소 정보를 크롤링합니다. 크롤링된 데이터는 챗봇의 응답에 사용됩니다.
 
 ## 🚀 배포
 Flask로 구축된 AI 서버는 AWS를 통해 배포 및 운영됩니다. 이를 통해 안정적이고 확장 가능한 서비스를 제공합니다.
