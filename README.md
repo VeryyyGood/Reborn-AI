@@ -25,6 +25,6 @@ Flask로 구축된 AI 서버는 AWS를 통해 배포 및 운영됩니다. 이를
 
 
 ## 🤖 AI 기술 개발자
-[문채영](https://github.com/mcy0325) ⭐
+[문채영](https://github.com/mcy0325) 
 
 
